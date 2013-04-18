@@ -1,5 +1,6 @@
 $:.unshift File.expand_path '../lib', File.dirname(__FILE__)
 require 'rubygems'
+require 'bundler/setup'
 require 'sinatra'
 require 'sinatra/rocketio'
 require 'sinatra/reloader' if development?
