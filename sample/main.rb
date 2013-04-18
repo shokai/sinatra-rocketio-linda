@@ -17,3 +17,11 @@ end
 get '/' do
   haml :index
 end
+
+get '/worker' do
+  haml :worker
+end
+
+get '/client' do
+  haml :client
+end

@@ -1,0 +1,16 @@
+!!!XHTML
+%html
+  %head
+    %meta{'http-equiv' => 'Content-Type', :content => 'text/html', :charset => 'UTF-8'}
+    %title Linda Client on RocketIO
+    %script{:src => "//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"}
+    %script{:src => rocketio_js}
+    %script{:src => linda_js}
+    %script{:src => "client.js"}
+  %body
+    %h1 Linda Client on RocketIO
+    %div#main
+      %div#calc
+        %input#txt_request{:type => :text, :value => "1+2*3*4-5"}
+        %input#btn_request{:type => :button, :value => "request!"}
+      %div#log
