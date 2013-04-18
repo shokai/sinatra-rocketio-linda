@@ -5,19 +5,26 @@ require 'sinatra/rocketio/linda/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "sinatra-rocketio-linda"
-  spec.version       = Sinatra::Rocketio::Linda::VERSION
+  spec.version       = Sinatra::RocketIO::Linda::VERSION
   spec.authors       = ["Sho Hashimoto"]
   spec.email         = ["hashimoto@shokai.org"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{Linda implementation on Sinatra RocketIO}
+  spec.summary       = spec.description
+  spec.homepage      = "https://github.com/shokai/sinatra-rocketio-linda"
   spec.license       = "MIT"
 
-  spec.files         = `git ls-files`.split($/)
+  spec.files         = `git ls-files`.split($/).reject{|i| i == "Gemfile.lock" }
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
+  spec.add_development_dependency "minitest"
+  spec.add_development_dependency "thin"
+  spec.add_development_dependency "haml"
+
+  spec.add_dependency "sinatra-rocketio"
+  spec.add_dependency "event_emitter"
+  spec.add_dependency "sinatra"
 end

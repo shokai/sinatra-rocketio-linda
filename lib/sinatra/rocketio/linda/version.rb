@@ -1,5 +1,5 @@
 module Sinatra
-  module Rocketio
+  module RocketIO
     module Linda
       VERSION = "0.0.1"
     end
