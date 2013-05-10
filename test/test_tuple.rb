@@ -16,4 +16,14 @@ class TestTuple < MiniTest::Unit::TestCase
     assert !tuple.match?(Sinatra::RocketIO::Linda::Tuple.new ["a","b",789])
     assert !tuple.match?(Sinatra::RocketIO::Linda::Tuple.new :foo => 1, :bar => 2)
   end
+
+  def test_match_hash
+    tuple = Sinatra::RocketIO::Linda::Tuple.new :a => 1, :b => 2
+    assert tuple.match? Sinatra::RocketIO::Linda::Tuple.new :a => 1, :b => 2
+    assert tuple.match? Sinatra::RocketIO::Linda::Tuple.new :a => 1, :b => 2, :c => 3
+    assert tuple.match? Sinatra::RocketIO::Linda::Tuple.new :a => 1, :b => 2, :c => {:foo => "bar"}
+    assert !tuple.match?(Sinatra::RocketIO::Linda::Tuple.new :a => 0, :b => 2)
+    assert !tuple.match?(Sinatra::RocketIO::Linda::Tuple.new :b => 2, :c => 3)
+    assert !tuple.match?(Sinatra::RocketIO::Linda::Tuple.new [1,2,3])
+  end
 end

@@ -17,10 +17,16 @@ module Sinatra
           if @type == Array
             return false if @data.length > target.data.length
             @data.each_with_index do |v,i|
-              return false if v != target.data[i]
+              return false if target.data[i] != v
+            end
+            return true
+          elsif @type == Hash
+            @data.each do |k,v|
+              return false if target.data[k] != v
             end
             return true
           end
+          false
         end
       end
     end
