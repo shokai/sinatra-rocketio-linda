@@ -1,6 +1,7 @@
 module Sinatra
   module RocketIO
     module Linda
+
       class Tuple
         attr_reader :data, :type
         def initialize(data)
@@ -29,6 +30,39 @@ module Sinatra
           false
         end
       end
+
+      class TupleSpace
+        include Enumerable
+        def initialize
+          @tuples = Array.new
+        end
+
+        def each(&block)
+          @tuples.each do |tp|
+            yield tp
+          end
+        end
+
+        def size
+          @tuples.size
+        end
+
+        def write(tuple)
+          tuple = Tuple.new tuple unless tuple.kind_of? Tuple
+          @tuples.unshift tuple
+        end
+
+        def read(tuple)
+          tuple = Tuple.new tuple unless tuple.kind_of? Tuple
+          @tuples.each do |t|
+            return t if tuple.match? t
+          end
+        end
+
+        def take(tuple)
+        end
+      end
+
     end
   end
 end
