@@ -50,6 +50,7 @@ module Sinatra
         def write(tuple)
           tuple = Tuple.new tuple unless tuple.kind_of? Tuple
           @tuples.unshift tuple
+          tuple
         end
 
         def read(tuple)
@@ -60,6 +61,8 @@ module Sinatra
         end
 
         def take(tuple)
+          return unless tp = read(tuple)
+          @tuples.delete tp
         end
       end
 
