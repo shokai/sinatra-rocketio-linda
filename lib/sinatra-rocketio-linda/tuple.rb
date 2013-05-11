@@ -58,7 +58,11 @@ module Sinatra
           :expire => 300
         }
 
-        def write(tuple, opts=DEFAULT_WRITE_OPTIONS)
+        def write(tuple, opts={})
+          raise ArgumentError, "options must be Hash" unless opts.kind_of? Hash
+          DEFAULT_WRITE_OPTIONS.each do |k,v|
+            opts[k] = v unless opts.include? k
+          end
           tuple = Tuple.new tuple, opts unless tuple.kind_of? Tuple
           calleds = []
           taked = nil
