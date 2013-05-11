@@ -60,18 +60,21 @@ module Sinatra
 
         def write(tuple, opts=DEFAULT_WRITE_OPTIONS)
           tuple = Tuple.new tuple, opts unless tuple.kind_of? Tuple
-          called = nil
+          calleds = []
+          taked = nil
           @callbacks.each do |callback|
             next unless callback[:tuple].match? tuple
-            if callback[:type] == :read
-              callback[:callback].call tuple
-            elsif callback[:type] == :take
+            callback[:callback].call tuple
+            calleds.push callback
+            if callback[:type] == :take
+              taked = tuple
+              break
             end
-            called = callback
-            break
           end
-          @callbacks.delete called if called
-          @tuples.unshift tuple
+          calleds.each do |called|
+            @callbacks.delete called
+          end
+          @tuples.unshift tuple unless taked
           tuple
         end
 
@@ -81,6 +84,7 @@ module Sinatra
             if tuple.match? t
               if block_given?
                 block.call t
+                return
               else
                 return t
               end

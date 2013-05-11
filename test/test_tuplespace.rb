@@ -30,9 +30,14 @@ class TestTupleSpace < MiniTest::Unit::TestCase
     @space.read [1,"a"] do |tuple|
       _tuple2 = tuple
     end
+    _tuple3 = nil
+    @space.read [1,2,3] do |tuple|
+      _tuple3 = tuple
+    end
     @space.write [1,2,3]
     assert_equal _tuple1.data, [1,2,3]
     assert_equal _tuple2, nil
+    assert_equal _tuple3.data, [1,2,3]
     assert_equal @space.read([1]).data, [1,2,3]
     assert_equal @space.size, 1
     @space.write [1,2,4]
