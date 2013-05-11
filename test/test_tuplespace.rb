@@ -65,6 +65,36 @@ class TestTupleSpace < MiniTest::Unit::TestCase
     assert_equal @space.size, 0
   end
 
+  def test_take_callback
+    assert_equal @space.size, 0
+    _tuple1 = nil
+    @space.take [1,2] do |tuple|
+      _tuple1 = tuple
+    end
+    _tuple2 = nil
+    @space.take [1,"a"] do |tuple|
+      _tuple2 = tuple
+    end
+    _tuple3 = nil
+    @space.read [1,2,3] do |tuple|
+      _tuple3 = tuple
+    end
+    _tuple4 = nil
+    @space.take [1,2,3] do |tuple|
+      _tuple4 = tuple
+    end
+    1.upto(3) do |i|
+      @space.write [1,2,3,"a"*i]
+    end
+    assert_equal @space.size, 1
+    assert_equal _tuple1.data, [1,2,3,"a"]
+    assert_equal _tuple2, nil
+    assert_equal _tuple3.data, [1,2,3,"aa"]
+    assert_equal _tuple4.data, [1,2,3,"aa"]
+    assert_equal @space.take([1]).data, [1,2,3,"aaa"]
+    assert_equal @space.size, 0
+  end
+
   def test_tuple_expire
     @space.write [1,2,3], :expire => 3
     @space.write [1,2,"a","b"], :expire => 2

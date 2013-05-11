@@ -94,8 +94,24 @@ module Sinatra
         end
 
         def take(tuple, &block)
-          return unless tp = read(tuple)
-          @tuples.delete tp
+          tuple = Tuple.new tuple unless tuple.kind_of? Tuple
+          matched_tuple = nil
+          @tuples.each do |t|
+            if tuple.match? t
+              matched_tuple = t
+              break
+            end
+          end
+          if matched_tuple
+            @tuples.delete matched_tuple
+            if block_given?
+              block.call matched_tuple
+            else
+              return matched_tuple
+            end
+          else
+            @callbacks.push(:type => :take, :callback => block, :tuple => tuple) if block_given?
+          end
         end
 
         def check_expire
