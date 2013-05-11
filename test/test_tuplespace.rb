@@ -16,7 +16,28 @@ class TestTupleSpace < MiniTest::Unit::TestCase
     @space.write :a => 1, :b => 2, :c => 3
     assert_equal @space.size, 3
     assert_equal @space.read(:a => 1, :c => 999).data, {:a => 1, :b => 2, :c => 999}
+    assert_equal @space.read(:a => 1, :c => 999).data, {:a => 1, :b => 2, :c => 999}
     assert_equal @space.read(:a => 1).data, {:a => 1, :b => 2, :c => 3}
+  end
+
+  def test_write_read_callback
+    assert_equal @space.size, 0
+    _tuple1 = nil
+    @space.read [1,2] do |tuple|
+      _tuple1 = tuple
+    end
+    _tuple2 = nil
+    @space.read [1,"a"] do |tuple|
+      _tuple2 = tuple
+    end
+    @space.write [1,2,3]
+    assert_equal _tuple1.data, [1,2,3]
+    assert_equal _tuple2, nil
+    assert_equal @space.read([1]).data, [1,2,3]
+    assert_equal @space.size, 1
+    @space.write [1,2,4]
+    assert_equal _tuple1.data, [1,2,3]
+    assert_equal @space.size, 2
   end
 
   def test_take
