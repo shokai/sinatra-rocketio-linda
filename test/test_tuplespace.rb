@@ -1,5 +1,4 @@
 require File.expand_path 'test_helper', File.dirname(__FILE__)
-require File.expand_path 'test_helper', File.dirname(__FILE__)
 require 'sinatra-rocketio-linda/tuple'
 
 class TestTupleSpace < MiniTest::Unit::TestCase
