@@ -3,13 +3,14 @@ module Sinatra
     module Linda
 
       class Tuple
-        attr_reader :data, :type
-        def initialize(data)
+        attr_reader :data, :type, :expire_at
+        def initialize(data, opts={})
           unless [Array, Hash].include? data.class
             raise ArgumentError, 'argument must be instance of Array or Hash'
           end
           @data = data
           @type = data.class
+          @expire_at = Time.now+(opts[:expire] || 300)
         end
 
         def match?(target)
@@ -37,6 +38,7 @@ module Sinatra
 
       class TupleSpace
         include Enumerable
+
         def initialize
           @tuples = Array.new
         end
@@ -51,8 +53,12 @@ module Sinatra
           @tuples.size
         end
 
-        def write(tuple)
-          tuple = Tuple.new tuple unless tuple.kind_of? Tuple
+        DEFAULT_WRITE_OPTIONS = {
+          :expire => 300
+        }
+
+        def write(tuple, opts=DEFAULT_WRITE_OPTIONS)
+          tuple = Tuple.new tuple, opts unless tuple.kind_of? Tuple
           @tuples.unshift tuple
           tuple
         end
@@ -67,6 +73,16 @@ module Sinatra
         def take(tuple)
           return unless tp = read(tuple)
           @tuples.delete tp
+        end
+
+        def check_expire
+          expires = []
+          each do |tuple|
+            expires.push tuple unless tuple.expire_at > Time.now
+          end
+          expires.each do |tuple|
+            @tuples.delete tuple
+          end
         end
       end
 
