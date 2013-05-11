@@ -29,6 +29,10 @@ module Sinatra
           end
           false
         end
+
+        def to_s
+          @data.to_s
+        end
       end
 
       class TupleSpace
