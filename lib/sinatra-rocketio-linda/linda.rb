@@ -32,13 +32,13 @@ end
 Sinatra::RocketIO.on :__linda_read do |data, client|
   tuple, callback = data
   Sinatra::RocketIO::Linda.read tuple do |tuple|
-    Sinatra::RocketIO.push "__linda_read_#{callback}", tuple.data
+    Sinatra::RocketIO.push "__linda_read_#{callback}", tuple.data, :to => client.session
   end
 end
 
 Sinatra::RocketIO.on :__linda_take do |data, client|
   tuple, callback = data
   Sinatra::RocketIO::Linda.take tuple do |tuple|
-    Sinatra::RocketIO.push "__linda_take_#{callback}", tuple.data
+    Sinatra::RocketIO.push "__linda_take_#{callback}", tuple.data, :to => client.session
   end
 end
