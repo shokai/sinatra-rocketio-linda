@@ -4,20 +4,12 @@ module Sinatra
   module RocketIO
     module Linda
 
-      def self.tuplespace
-        @@tuplespace ||= TupleSpace.new
+      def self.tuplespaces
+        @@spaces ||= Hash.new{|h,k| h[k] = TupleSpace.new }
       end
 
-      def self.write(tuple, opts={})
-        tuplespace.write tuple, opts
-      end
-
-      def self.read(tuple, &block)
-        tuplespace.read tuple, &block
-      end
-
-      def self.take(tuple, &block)
-        tuplespace.take tuple, &block
+      def self.[](name)
+        self.tuplespaces[name]
       end
     end
   end
@@ -26,19 +18,19 @@ end
 Sinatra::RocketIO.on :__linda_write do |data, client|
   tuple, opts = data
   opts = {} unless opts.kind_of? Hash
-  Sinatra::RocketIO::Linda.write tuple, opts
+  Sinatra::RocketIO::Linda["__default"].write tuple, opts
 end
 
 Sinatra::RocketIO.on :__linda_read do |data, client|
   tuple, callback = data
-  Sinatra::RocketIO::Linda.read tuple do |tuple|
+  Sinatra::RocketIO::Linda["__default"].read tuple do |tuple|
     Sinatra::RocketIO.push "__linda_read_#{callback}", tuple.data, :to => client.session
   end
 end
 
 Sinatra::RocketIO.on :__linda_take do |data, client|
   tuple, callback = data
-  Sinatra::RocketIO::Linda.take tuple do |tuple|
+  Sinatra::RocketIO::Linda["__default"].take tuple do |tuple|
     Sinatra::RocketIO.push "__linda_take_#{callback}", tuple.data, :to => client.session
   end
 end
