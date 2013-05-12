@@ -1,8 +1,8 @@
 var linda = new Linda();
-var ts = new linda.TupleSpace("calc_request_response");
+var ts = new linda.TupleSpace("calc");
 
 var calc = function(){
-  ts.take(["calc"], function(tuple){
+  ts.take(["calc_request"], function(tuple){
     var query = tuple[1];
     var result = eval(query);
     $("#log").prepend( $("<p>").text(query+" = "+result).prepend("calc: ") );
@@ -11,6 +11,4 @@ var calc = function(){
   });
 };
 
-linda.io.on("connect", function(){
-  calc();
-});
+linda.io.on("connect", calc);
