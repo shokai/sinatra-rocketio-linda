@@ -7,7 +7,9 @@ sinatra-rocketio-linda
 
 Linda
 -----
-Linda is..
+
+* http://en.wikipedia.org/wiki/Linda_(coordination_language)
+* http://ja.wikipedia.org/wiki/Linda
 
 
 Installation
