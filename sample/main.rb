@@ -9,6 +9,10 @@ io.on :disconnect do |client|
   puts "bye <#{client}>"
 end
 
+linda.on :error do |err|
+  STDERR.puts err
+end
+
 
 get '/' do
   haml :index
