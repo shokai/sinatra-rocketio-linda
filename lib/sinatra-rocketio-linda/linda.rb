@@ -14,6 +14,14 @@ module Sinatra
   end
 end
 
+Sinatra::RocketIO.on :start do
+  EM::add_periodic_timer Sinatra::RocketIO::Linda.options[:expire_check] do
+    Sinatra::RocketIO::Linda::tuplespaces.values.each do |ts|
+      ts.check_expire
+    end
+  end
+end
+
 EventEmitter.apply Sinatra::RocketIO::Linda
 
 Sinatra::RocketIO.on :__linda_write do |data, client|
@@ -23,7 +31,15 @@ Sinatra::RocketIO.on :__linda_write do |data, client|
     Sinatra::RocketIO::Linda.emit :error, "received Tuple is not Hash or Array at :__linda_write"
     next
   end
-  opts = {} unless opts.kind_of? Hash
+  unless opts.kind_of? Hash
+    opts = {}
+  else
+    opts_ = {}
+    opts.each do |k,v|
+      opts_[k.to_sym] = v
+    end
+    opts = opts_
+  end
   Sinatra::RocketIO::Linda[space].write tuple, opts
 end
 
