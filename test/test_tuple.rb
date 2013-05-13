@@ -1,7 +1,7 @@
 require File.expand_path 'test_helper', File.dirname(__FILE__)
 require 'sinatra-rocketio-linda/tuple'
 
-class TestTuple < MiniTest::Unit::TestCase
+class TestTuple < MiniTest::Test
   def test_match_array
     tuple = Sinatra::RocketIO::Linda::Tuple.new [1,2,3]
     assert tuple.match? Sinatra::RocketIO::Linda::Tuple.new [1,2,3]

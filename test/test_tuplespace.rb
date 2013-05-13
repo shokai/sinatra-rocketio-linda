@@ -2,7 +2,7 @@ require File.expand_path 'test_helper', File.dirname(__FILE__)
 require 'sinatra-rocketio-linda/tuple'
 require 'sinatra-rocketio-linda/tuplespace'
 
-class TestTupleSpace < MiniTest::Unit::TestCase
+class TestTupleSpace < MiniTest::Test
 
   def setup
     @space = Sinatra::RocketIO::Linda::TupleSpace.new
