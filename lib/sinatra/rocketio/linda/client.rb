@@ -4,41 +4,57 @@ require 'sinatra/rocketio/client'
 module Sinatra
   module RocketIO
     module Linda
+
       class Client
-        include EventEmitter
-        attr_reader :io
-        def initialize(url)
-          this = self
-          @io = Sinatra::RocketIO::Client.new url
-          @io.on :__linda do |tuple|
-            this.emit tuple['key'], tuple['value']
+        attr_reader :io, :tuplespace
+        def initialize(io)
+          if io.kind_of? String and io =~ /^https?:\/\/.+$/
+            @io = Sinatra::RocketIO::Client.new(io).connect
+          elsif io.kind_of? Sinatra::RocketIO::Client
+            @io = io
+          else
+            raise ArgumentError, "argument must be URL or RocketIO::Client"
           end
-          @io.on :connect do
-            this.emit :connect, @io
-          end
-          @io.on :disconnect do
-            this.emit :disconnect, @io
-          end
-          @io.on :error do |err|
-            this.emit :error, err
-          end
-          self
+          @tuplespace = Hash.new{|h,k|
+            h[k] = Sinatra::RocketIO::Linda::Client::TupleSpace.new(k, self)
+          }
         end
 
-        def connect
-          @io.connect
-          self
-        end
+        class TupleSpace
+          attr_reader :name, :linda
+          def initialize(name, linda)
+            @name = name
+            @linda = linda
+          end
 
-        def read(key, &block)
-          self.on key, &block if block_given?
-        end
+          def write(tuple, opts={})
+            unless [Hash, Array].include? tuple.class
+              raise ArgumentError, "tuple must be Array or Hash"
+            end
+            @linda.io.push "__linda_write", [@name, tuple, opts]
+          end
 
-        def write(key, value)
-          @io.push :__linda, {:key => key, :value => value}
+          def read(tuple, &block)
+            unless [Hash, Array].include? tuple.class
+              raise ArgumentError, "tuple must be Array or Hash"
+            end
+            callback_id = "#{Time.now.to_i}#{Time.now.usec}"
+            @linda.io.once "__linda_read_callback_#{callback_id}", &block
+            @linda.io.push "__linda_read", [@name, tuple, callback_id]
+          end
+
+          def take(tuple, &block)
+            unless [Hash, Array].include? tuple.class
+              raise ArgumentError, "tuple must be Array or Hash"
+            end
+            callback_id = "#{Time.now.to_i}#{Time.now.usec}"
+            @linda.io.once "__linda_take_callback_#{callback_id}", &block
+            @linda.io.push "__linda_take", [@name, tuple, callback_id]
+          end
         end
 
       end
+
     end
   end
 end
