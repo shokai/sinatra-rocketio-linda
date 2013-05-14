@@ -13,7 +13,6 @@ linda.on :error do |err|
   STDERR.puts err
 end
 
-
 get '/' do
   haml :index
 end

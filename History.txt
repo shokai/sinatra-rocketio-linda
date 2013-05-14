@@ -1,0 +1,8 @@
+=== 0.0.1 2013-05-15
+
+* JavaScript Linda Client for WebBrowser
+* Ruby Linda Client
+* TupleSpace#write(tuple)
+* TupleSpace#take(tuple, callback(tuple))
+* TupleSpace#read(tuple, callback(tuple))
+* sinatra config - set :linda, :expire_check => 60 (sec)
