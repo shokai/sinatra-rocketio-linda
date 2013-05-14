@@ -35,7 +35,7 @@ module Sinatra
           @callbacks.each do |callback|
             next unless callback[:tuple].match? tuple
             callback[:callback].call tuple
-            calleds.push callback
+            calleds.push callback unless callback[:type] == :watch
             if callback[:type] == :take
               taked = tuple
               break
@@ -82,6 +82,12 @@ module Sinatra
           else
             @callbacks.push(:type => :take, :callback => block, :tuple => tuple) if block_given?
           end
+        end
+
+        def watch(tuple, &block)
+          raise ArgumentError, "block not given" unless block_given?
+          tuple = Tuple.new tuple unless tuple.kind_of? Tuple
+          @callbacks.unshift(:type => :watch, :callback => block, :tuple => tuple)
         end
 
         def check_expire

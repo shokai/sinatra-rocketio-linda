@@ -96,6 +96,26 @@ class TestTupleSpace < MiniTest::Test
     assert_equal @space.size, 0
   end
 
+  def test_watch
+    assert_equal @space.size, 0
+    _tuple1 = nil
+    @space.take [1] do |tuple|
+      _tuple1 = tuple
+    end
+    results = []
+    @space.watch [1,2] do |tuple|
+      results << tuple
+    end
+    @space.write [1,2,3]
+    @space.write [1,2,"aa"]
+    @space.write [1,"a",3]
+    assert_equal _tuple1.data, [1,2,3]
+    assert_equal @space.size, 2
+    assert_equal results.size, 2
+    assert_equal results[0].data, [1,2,3]
+    assert_equal results[1].data, [1,2,"aa"]
+  end
+
   def test_tuple_expire
     @space.write [1,2,3], :expire => 3
     @space.write [1,2,"a","b"], :expire => 2
