@@ -18,3 +18,8 @@ var take_result = function(){
 };
 
 io.on("connect", take_result);
+io.on("connect", function(){
+  ts.watch(["calc_request"], function(tuple){
+    console.log(tuple);
+  });
+});

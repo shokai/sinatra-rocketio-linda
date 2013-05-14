@@ -74,3 +74,19 @@ Sinatra::RocketIO.on :__linda_take do |data, client|
     Sinatra::RocketIO.push "__linda_take_callback_#{callback}", tuple.data, :to => client.session
   end
 end
+
+Sinatra::RocketIO.on :__linda_watch do |data, client|
+  space, tuple, callback = data
+  space = "__default__" if !space or !space.kind_of? String or space.empty?
+  unless [Hash, Array].include? tuple.class
+    Sinatra::RocketIO::Linda.emit :error, "received Tuple is not Hash or Array at :__linda_watch"
+    next
+  end
+  if !callback or !callback.kind_of? String or callback.empty?
+    Sinatra::RocketIO::Linda.emit :error, "received Callback ID is not valid at :__linda_watch"
+    next
+  end
+  Sinatra::RocketIO::Linda[space].watch tuple do |tuple|
+    Sinatra::RocketIO.push "__linda_watch_callback_#{callback}", tuple.data, :to => client.session
+  end
+end
