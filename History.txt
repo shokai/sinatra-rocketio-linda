@@ -5,4 +5,4 @@
 * TupleSpace#write(tuple)
 * TupleSpace#take(tuple, callback(tuple))
 * TupleSpace#read(tuple, callback(tuple))
-* sinatra config - set :linda, :expire_check => 60 (sec)
+* sinatra config - set :linda, :check_expire => 60 (sec)
