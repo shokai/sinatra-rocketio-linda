@@ -115,6 +115,37 @@ var calc = function(){
 io.on("connect", calc); // RocketIO's "connect" event
 ```
 
+worker side (Ruby)
+
+```ruby
+require 'rubygems'
+require 'sinatra/rocketio/linda/client'
+
+## create tuplespace
+linda = Sinatra::RocketIO::Linda::Client.new 'http://localhost:5000'
+ts = linda.tuplespace["calc"]
+
+## calculate
+calc = lambda{
+  ts.take ["calc_request"] do |tuple|
+    query = tuple[1] ## => "1-2+3*4"
+    result = eval(query)
+    puts "calc: #{query} = #{result}" ## => "1-2+3*4 = 11"
+    ts.write ["calc_result", result]  ## return to 'client' side
+    calc.call ## recursive call
+  end
+}
+
+linda.io.on :connect do  ## RocketIO's "connect" event
+  puts "connect #{io.session}"
+  calc.call
+end
+
+loop do
+end
+```
+
+
 Test
 ----
 
