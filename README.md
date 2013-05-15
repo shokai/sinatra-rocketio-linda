@@ -5,13 +5,6 @@ sinatra-rocketio-linda
 * https://github.com/shokai/sinatra-rocketio-linda
 
 
-Linda
------
-
-* http://en.wikipedia.org/wiki/Linda_(coordination_language)
-* http://ja.wikipedia.org/wiki/Linda
-
-
 Installation
 ------------
 
@@ -25,6 +18,29 @@ Requirements
 * [Sinatra RocketIO](https://github.com/shokai/sinatra-rocketio)
 * [EventMachine](http://rubyeventmachine.com)
 * [jQuery](http://jquery.com)
+
+
+Linda
+-----
+Linda is a coordination launguage for parallel programming.
+
+* http://en.wikipedia.org/wiki/Linda_(coordination_language)
+* http://ja.wikipedia.org/wiki/Linda
+
+
+### TupleSpace
+Shared memory on Sinatra.
+
+
+### Tuple Operations
+- write( tuple, options )
+  - put a Tuple into the TupleSpace
+- take( tuple, callback(tuple) )
+  - get a matched Tuple from the TupleSpace and delete
+- read( tuple, callback(tuple) )
+  - get a matched Tuple from the TupleSpace
+- watch( tuple, callback(tuple) )
+  - overwatch written Tuples in the TupleSpace
 
 
 Usage
