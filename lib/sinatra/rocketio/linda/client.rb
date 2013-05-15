@@ -51,6 +51,16 @@ module Sinatra
             @linda.io.once "__linda_take_callback_#{callback_id}", &block
             @linda.io.push "__linda_take", [@name, tuple, callback_id]
           end
+
+          def watch(tuple, &block)
+            unless [Hash, Array].include? tuple.class
+              raise ArgumentError, "tuple must be Array or Hash"
+            end
+            callback_id = "#{Time.now.to_i}#{Time.now.usec}"
+            @linda.io.on "__linda_watch_callback_#{callback_id}", &block
+            @linda.io.push "__linda_watch", [@name, tuple, callback_id]
+          end
+
         end
 
       end
