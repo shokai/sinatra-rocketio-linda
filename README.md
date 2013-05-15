@@ -151,6 +151,13 @@ Test
 
     % gem install bundler
     % bundle install
+
+start server
+
+    % rake test_server
+
+run test
+
     % rake test
 
 
