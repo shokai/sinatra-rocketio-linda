@@ -43,50 +43,20 @@ Sinatra::RocketIO.on :__linda_write do |data, client|
   Sinatra::RocketIO::Linda[space].write tuple, opts
 end
 
-Sinatra::RocketIO.on :__linda_read do |data, client|
-  space, tuple, callback = data
-  space = "__default__" if !space or !space.kind_of? String or space.empty?
-  unless [Hash, Array].include? tuple.class
-    Sinatra::RocketIO::Linda.emit :error, "received Tuple is not Hash or Array at :__linda_read"
-    next
-  end
-  if !callback or !callback.kind_of? String or callback.empty?
-    Sinatra::RocketIO::Linda.emit :error, "received Callback ID is not valid at :__linda_read"
-    next
-  end
-  Sinatra::RocketIO::Linda[space].read tuple do |tuple|
-    Sinatra::RocketIO.push "__linda_read_callback_#{callback}", tuple.data, :to => client.session
-  end
-end
-
-Sinatra::RocketIO.on :__linda_take do |data, client|
-  space, tuple, callback = data
-  space = "__default__" if !space or !space.kind_of? String or space.empty?
-  unless [Hash, Array].include? tuple.class
-    Sinatra::RocketIO::Linda.emit :error, "received Tuple is not Hash or Array at :__linda_take"
-    next
-  end
-  if !callback or !callback.kind_of? String or callback.empty?
-    Sinatra::RocketIO::Linda.emit :error, "received Callback ID is not valid at :__linda_take"
-    next
-  end
-  Sinatra::RocketIO::Linda[space].take tuple do |tuple|
-    Sinatra::RocketIO.push "__linda_take_callback_#{callback}", tuple.data, :to => client.session
-  end
-end
-
-Sinatra::RocketIO.on :__linda_watch do |data, client|
-  space, tuple, callback = data
-  space = "__default__" if !space or !space.kind_of? String or space.empty?
-  unless [Hash, Array].include? tuple.class
-    Sinatra::RocketIO::Linda.emit :error, "received Tuple is not Hash or Array at :__linda_watch"
-    next
-  end
-  if !callback or !callback.kind_of? String or callback.empty?
-    Sinatra::RocketIO::Linda.emit :error, "received Callback ID is not valid at :__linda_watch"
-    next
-  end
-  Sinatra::RocketIO::Linda[space].watch tuple do |tuple|
-    Sinatra::RocketIO.push "__linda_watch_callback_#{callback}", tuple.data, :to => client.session
+[:read, :take, :watch].each do |func|
+  Sinatra::RocketIO.on "__linda_#{func}" do |data, client|
+    space, tuple, callback = data
+    space = "__default__" if !space or !space.kind_of? String or space.empty?
+    unless [Hash, Array].include? tuple.class
+      Sinatra::RocketIO::Linda.emit :error, "received Tuple is not Hash or Array at :__linda_#{func}"
+      next
+    end
+    if !callback or !callback.kind_of? String or callback.empty?
+      Sinatra::RocketIO::Linda.emit :error, "received Callback ID is not valid at :__linda_#{func}"
+      next
+    end
+    Sinatra::RocketIO::Linda[space].__send__ func, tuple do |tuple|
+      Sinatra::RocketIO.push "__linda_#{func}_callback_#{callback}", tuple.data, :to => client.session
+    end
   end
 end
