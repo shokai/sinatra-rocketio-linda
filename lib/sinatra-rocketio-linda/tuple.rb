@@ -10,7 +10,9 @@ module Sinatra
           end
           @data = data
           @type = data.class
-          @expire_at = Time.now+(opts[:expire] || 300)
+          if opts[:expire].class == Fixnum and opts[:expire] > 0
+            @expire_at = Time.now + opts[:expire]
+          end
         end
 
         def match?(target)

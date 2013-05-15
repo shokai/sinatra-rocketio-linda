@@ -117,13 +117,17 @@ class TestTupleSpace < MiniTest::Test
   end
 
   def test_tuple_expire
+    @space.write [1,2,999], :expire => false
     @space.write [1,2,3], :expire => 3
     @space.write [1,2,"a","b"], :expire => 2
-    assert_equal @space.size, 2
+    assert_equal @space.size, 3
     sleep 2
     @space.check_expire
-    assert_equal @space.size, 1
+    assert_equal @space.size, 2
     assert_equal @space.take([1,2]).data, [1,2,3]
+    assert_equal @space.size, 1
+    sleep 1
+    assert_equal @space.take([1,2]).data, [1,2,999]
     assert_equal @space.size, 0
   end
 
