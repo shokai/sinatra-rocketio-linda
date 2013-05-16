@@ -1,8 +1,16 @@
+=== 0.0.3 2013-05-16
+
+* remove read/take/watch listener on client disconnect
+* {expire => false} option on tuple write
+* add ruby client's test
+
 === 0.0.2 2013-05-15
+
 * update README
 * TupleSpace#watch(tuple, callback(tuple))
 
 === 0.0.1 2013-05-15
+
 * JavaScript Linda Client for WebBrowser
 * Ruby Linda Client
 * TupleSpace#write(tuple)
