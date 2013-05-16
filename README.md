@@ -54,7 +54,7 @@ Server Side
 require 'sinatra'
 require 'sinatra/rocketio'
 require 'sinatra/rocketio/linda'
-set :linda, :check_expire => 60
+set :linda, :expire_check => 60
 
 run Sinatra::Application
 ```
