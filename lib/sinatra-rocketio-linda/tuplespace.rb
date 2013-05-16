@@ -4,8 +4,10 @@ module Sinatra
 
       class TupleSpace
         include Enumerable
+        attr_reader :name
 
-        def initialize
+        def initialize(name="__default__")
+          @name = name
           @tuples = Array.new
           @callbacks = Array.new
         end

@@ -3,11 +3,17 @@ module Sinatra
     module Linda
 
       def self.tuplespaces
-        @@spaces ||= Hash.new{|h,k| h[k] = TupleSpace.new }
+        @@spaces ||= Hash.new{|h,k| h[k] = TupleSpace.new(k) }
       end
 
       def self.[](name)
         self.tuplespaces[name]
+      end
+
+      def self.check_expire
+        tuplespaces.values.each do |ts|
+          ts.check_expire
+        end
       end
 
     end
@@ -16,9 +22,7 @@ end
 
 Sinatra::RocketIO.on :start do
   EM::add_periodic_timer Sinatra::RocketIO::Linda.options[:expire_check] do
-    Sinatra::RocketIO::Linda::tuplespaces.values.each do |ts|
-      ts.check_expire
-    end
+    Sinatra::RocketIO::Linda.check_expire
   end
 end
 
