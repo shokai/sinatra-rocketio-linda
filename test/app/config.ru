@@ -8,6 +8,7 @@ require 'sinatra/rocketio'
 require 'sinatra/rocketio/linda'
 require File.dirname(__FILE__)+'/main'
 
+set :linda, :check_expire => 30
 set :websocketio, :port => ENV['WS_PORT'].to_i
 
 run TestApp

@@ -8,7 +8,7 @@ class TestRubyClient < MiniTest::Test
   end
 
   def test_write_read_take
-    ts_name = "ts_#{Time.now.to_i}"
+    ts_name = "ts_#{rand Time.now.to_i}"
     ts = @client.tuplespace[ts_name]
     _tuple1 = nil
     _tuple2 = nil
@@ -49,7 +49,7 @@ class TestRubyClient < MiniTest::Test
     results = []
     _tuple1 = nil
     _tuple2 = nil
-    ts = @client.tuplespace["ts_#{Time.now.to_i}"]
+    ts = @client.tuplespace["ts_#{rand Time.now.to_i}"]
     @client.io.on :connect do
       ts.take ["watch",1,2] do |tuple|
         _tuple1 = tuple
@@ -76,8 +76,8 @@ class TestRubyClient < MiniTest::Test
   end
 
   def test_tuplespaces
-    ts1 = @client.tuplespace["ts1_#{Time.now.to_i}"]
-    ts2 = @client.tuplespace["ts2_#{Time.now.to_i}"]
+    ts1 = @client.tuplespace["ts1_#{rand Time.now.to_i}"]
+    ts2 = @client.tuplespace["ts2_#{rand Time.now.to_i}"]
     _tuple1 = nil
     _tuple2 = nil
     @client.io.on :connect do
@@ -96,5 +96,30 @@ class TestRubyClient < MiniTest::Test
     end
     assert_equal _tuple1, [1,2,3]
     assert_equal _tuple2, ["a","b","c"]
+  end
+
+  def test_tuple_expire
+    ts = @client.tuplespace["ts_#{rand Time.now.to_i}"]
+    _tuple1 = nil
+    _tuple2 = nil
+    @client.io.on :connect do
+      ts.write ["expire",1,2,999], :expire => false
+      ts.write ["expire",1,2,3], :expire => 10
+      ts.write ["expire",1,2,"a","b"], :expire => 2
+      ts.read ["expire",1,2] do |tuple|
+        _tuple1 = tuple
+      end
+      sleep 3
+      @client.io.push :check_expire, []
+      ts.read ["expire",1,2] do |tuple|
+        _tuple2 = tuple
+      end
+    end
+    50.times do
+      sleep 0.1
+      break if _tuple2
+    end
+    assert_equal _tuple1, ["expire",1,2,"a","b"]
+    assert_equal _tuple2, ["expire",1,2,3]
   end
 end

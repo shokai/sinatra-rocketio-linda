@@ -94,8 +94,8 @@ module Sinatra
 
         def check_expire
           expires = []
-          each do |tuple|
-            expires.push tuple if tuple.expire_at and tuple.expire_at < Time.now
+          self.each do |tuple|
+            expires.push(tuple) if tuple.expire_at and tuple.expire_at < Time.now
           end
           expires.each do |tuple|
             @tuples.delete tuple
