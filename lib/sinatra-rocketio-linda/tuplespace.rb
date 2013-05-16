@@ -18,6 +18,10 @@ module Sinatra
           end
         end
 
+        def remove_callback(callback)
+          @callbacks.delete callback
+        end
+
         def size
           @tuples.size
         end
@@ -62,7 +66,11 @@ module Sinatra
               end
             end
           end
-          @callbacks.push(:type => :read, :callback => block, :tuple => tuple) if block_given?
+          if block_given?
+            callback = {:type => :read, :callback => block, :tuple => tuple}
+            @callbacks.push callback
+            return callback
+          end
         end
 
         def take(tuple, &block)
@@ -82,14 +90,20 @@ module Sinatra
               return matched_tuple
             end
           else
-            @callbacks.push(:type => :take, :callback => block, :tuple => tuple) if block_given?
+            if block_given?
+              callback = {:type => :take, :callback => block, :tuple => tuple}
+              @callbacks.push callback
+              return callback
+            end
           end
         end
 
         def watch(tuple, &block)
           raise ArgumentError, "block not given" unless block_given?
           tuple = Tuple.new tuple unless tuple.kind_of? Tuple
-          @callbacks.unshift(:type => :watch, :callback => block, :tuple => tuple)
+          callback = {:type => :watch, :callback => block, :tuple => tuple}
+          @callbacks.unshift callback
+          callback
         end
 
         def check_expire

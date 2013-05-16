@@ -59,8 +59,11 @@ end
       Sinatra::RocketIO::Linda.emit :error, "received Callback ID is not valid at :__linda_#{func}"
       next
     end
-    Sinatra::RocketIO::Linda[space].__send__ func, tuple do |tuple|
+    eid = Sinatra::RocketIO::Linda[space].__send__ func, tuple do |tuple|
       Sinatra::RocketIO.push "__linda_#{func}_callback_#{callback}", tuple.data, :to => client.session
+    end
+    Sinatra::RocketIO.on :disconnect do |_client|
+      Sinatra::RocketIO::Linda[space].remove_callback eid if client.session == _client.session
     end
   end
 end
