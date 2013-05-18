@@ -26,6 +26,7 @@ Linda is a coordination launguage for parallel programming.
 
 * http://en.wikipedia.org/wiki/Linda_(coordination_language)
 * http://ja.wikipedia.org/wiki/Linda
+* https://github.com/shokai/linda-ruby#usage
 
 
 ### TupleSpace
@@ -41,6 +42,8 @@ Shared memory on Sinatra.
   - get a matched Tuple from the TupleSpace
 - watch( tuple, callback(tuple) )
   - overwatch written Tuples in the TupleSpace
+
+see details on https://github.com/shokai/linda-ruby#usage
 
 
 Usage
@@ -163,7 +166,6 @@ run test
 
 Contributing
 ------------
-
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
