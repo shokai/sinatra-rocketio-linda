@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sinatra-rocketio-linda (0.0.3)
+    sinatra-rocketio-linda (0.0.4)
       event_emitter
       linda
       sinatra
