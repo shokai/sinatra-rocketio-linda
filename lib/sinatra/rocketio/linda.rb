@@ -1,3 +1,5 @@
+require "rubygems"
+require "linda"
 require "sinatra/rocketio/linda/version"
 require "sinatra-rocketio-linda/helper"
 require "sinatra-rocketio-linda/options"

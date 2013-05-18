@@ -3,6 +3,7 @@ PATH
   specs:
     sinatra-rocketio-linda (0.0.3)
       event_emitter
+      linda
       sinatra
       sinatra-rocketio
 
@@ -24,7 +25,8 @@ GEM
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
     json (1.8.0)
-    minitest (5.0.0)
+    linda (0.0.2)
+    minitest (5.0.1)
     multi_json (1.7.3)
     multi_xml (0.5.3)
     rack (1.5.2)
