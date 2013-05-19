@@ -60,7 +60,7 @@ end
       next
     end
     eid = Sinatra::RocketIO::Linda[space].__send__ func, tuple do |tuple|
-      Sinatra::RocketIO.push "__linda_#{func}_callback_#{callback}", tuple.data, :to => client.session
+      Sinatra::RocketIO.push "__linda_#{func}_callback_#{callback}", tuple, :to => client.session
     end
     Sinatra::RocketIO.on :disconnect do |_client|
       Sinatra::RocketIO::Linda[space].remove_callback eid if client.session == _client.session
