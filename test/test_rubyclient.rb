@@ -110,7 +110,7 @@ class TestRubyClient < MiniTest::Test
         _tuple1 = tuple
       end
       sleep 3
-      @client.io.push :check_expire, []
+      push :check_expire, nil
       ts.read ["expire",1,2] do |tuple|
         _tuple2 = tuple
       end
