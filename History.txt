@@ -1,3 +1,8 @@
+=== 0.0.5 2013-05-20
+
+* include rocketio_js into linda_js
+* passed all tests
+
 === 0.0.4 2013-05-19
 
 * move Tuple/TupleSpace code to linda gem (https://rubygems.org/gems/linda)
