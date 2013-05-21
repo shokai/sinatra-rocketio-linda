@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "haml"
 
   spec.add_dependency "linda"
+  spec.add_dependency "hashie"
   spec.add_dependency "sinatra-rocketio"
   spec.add_dependency "event_emitter"
   spec.add_dependency "sinatra"

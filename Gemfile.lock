@@ -3,6 +3,7 @@ PATH
   specs:
     sinatra-rocketio-linda (0.0.5)
       event_emitter
+      hashie
       linda
       sinatra
       sinatra-rocketio

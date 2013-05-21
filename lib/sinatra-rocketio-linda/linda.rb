@@ -45,6 +45,7 @@ Sinatra::RocketIO.on :__linda_write do |data, client|
     opts = opts_
   end
   Sinatra::RocketIO::Linda[space].write tuple, opts
+  Sinatra::RocketIO::Linda.emit :write, Hashie::Mash.new(:space => space, :tuple => tuple), client
 end
 
 [:read, :take, :watch].each do |func|
@@ -61,6 +62,7 @@ end
     end
     eid = Sinatra::RocketIO::Linda[space].__send__ func, tuple do |tuple|
       Sinatra::RocketIO.push "__linda_#{func}_callback_#{callback}", tuple, :to => client.session
+      Sinatra::RocketIO::Linda.emit func, Hashie::Mash.new(:space => space, :tuple => tuple), client
     end
     Sinatra::RocketIO.on :disconnect do |_client|
       Sinatra::RocketIO::Linda[space].remove_callback eid if client.session == _client.session
