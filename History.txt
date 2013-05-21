@@ -1,3 +1,7 @@
+=== 0.0.6 2013-05-22
+
+* emit tuple operation events
+
 === 0.0.5 2013-05-20
 
 * include rocketio_js into linda_js
