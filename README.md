@@ -1,7 +1,7 @@
 sinatra-rocketio-linda
 ======================
 
-* Linda implementation on Sinatra::RocketIO
+* [Linda](https://github.com/shokai/linda-ruby) implementation on [Sinatra::RocketIO](https://github.com/shokai/sinatra-rocketio)
 * https://github.com/shokai/sinatra-rocketio-linda
 
 
