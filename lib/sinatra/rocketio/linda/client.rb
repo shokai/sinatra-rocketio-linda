@@ -7,18 +7,18 @@ module Sinatra
 
       class Client
         attr_reader :io, :tuplespace
-        def initialize(io)
-          if io.kind_of? String and io =~ /^https?:\/\/.+$/
-            @io = Sinatra::RocketIO::Client.new(io).connect
-          elsif io.kind_of? Sinatra::RocketIO::Client
-            @io = io
+        def initialize(io_or_url)
+          if io_or_url.kind_of? String and io_or_url =~ /^https?:\/\/.+$/
+            @io = Sinatra::RocketIO::Client.new(io_or_url).connect
+          elsif io_or_url.kind_of? ::Sinatra::RocketIO::Client
+            @io = io_or_url
           else
             raise ArgumentError, "argument must be URL or RocketIO::Client"
           end
           @tuplespace = Hash.new{|h,k|
             h[k] = Sinatra::RocketIO::Linda::Client::TupleSpace.new(k, self)
           }
-        end
+       end
 
         class TupleSpace
           attr_reader :name, :linda
