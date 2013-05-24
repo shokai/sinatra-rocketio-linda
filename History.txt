@@ -1,3 +1,7 @@
+=== 0.0.7 2013-05-24
+
+* add function Sinatra::RocketIO::Linda::Client#wait
+
 === 0.0.6 2013-05-22
 
 * emit tuple operation events
