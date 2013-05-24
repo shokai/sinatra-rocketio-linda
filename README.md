@@ -143,8 +143,7 @@ linda.io.on :connect do  ## RocketIO's "connect" event
   calc.call
 end
 
-loop do
-end
+linda.wait
 ```
 
 

@@ -20,6 +20,13 @@ module Sinatra
           }
        end
 
+        def wait(&block)
+          loop do
+            sleep 1
+            yield if block_given?
+          end
+        end
+
         class TupleSpace
           attr_reader :name, :linda
           def initialize(name, linda)

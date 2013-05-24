@@ -17,5 +17,4 @@ linda.io.on :disconnect do
   puts "disconnect #{io.session}"
 end
 
-loop do
-end
+linda.wait

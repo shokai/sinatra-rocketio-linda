@@ -29,6 +29,4 @@ linda.io.on :error do |err|
   STDERR.puts err
 end
 
-loop do
-  sleep 1
-end
+linda.wait
