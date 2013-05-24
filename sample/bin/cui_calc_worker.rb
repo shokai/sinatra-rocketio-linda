@@ -25,5 +25,10 @@ linda.io.on :disconnect do
   puts "disconnect #{io.session}"
 end
 
+linda.io.on :error do |err|
+  STDERR.puts err
+end
+
 loop do
+  sleep 1
 end
