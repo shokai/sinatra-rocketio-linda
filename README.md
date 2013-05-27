@@ -147,6 +147,43 @@ linda.wait
 ```
 
 
+JavaScript Lib for browser
+--------------------------
+
+### Download
+
+- [linda.js](https://raw.github.com/shokai/sinatra-rocketio-linda/master/linda.js)
+- [linda.min.js](https://raw.github.com/shokai/sinatra-rocketio-linda/master/linda.min.js)
+
+
+### Usage
+
+```html
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="/linda.min.js"></script>
+```
+```javascript
+var io = new RocketIO().connect("http://example.com");
+var linda = new Linda(io);
+
+var ts = new linda.TupleSpace("calc");
+
+io.on("connect", function(){
+  alert(io.type + " connect!! " + io.session);
+  ts.write([1, 2, 3]);
+});
+```
+
+### Generate JS Lib
+
+    % npm install -g uglify-js
+    % gem install bundler
+    % bundle install
+    % rake jslib
+
+=> linda.js and linda.min.js
+
+
 Test
 ----
 

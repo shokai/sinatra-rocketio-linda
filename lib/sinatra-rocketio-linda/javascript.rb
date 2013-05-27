@@ -3,7 +3,7 @@ module Sinatra
     module Linda
 
       def self.javascript(*js_file_names)
-        js_file_names = ['rocketio.js', 'linda.js']
+        js_file_names = ['linda.js', 'rocketio.js']
         js = ''
         js_file_names.each do |i|
           js += case i
