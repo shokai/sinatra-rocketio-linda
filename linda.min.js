@@ -1,4 +1,4 @@
-// Linda.js v0.0.8 (rocketio v0.2.6)
+// Linda.js v0.0.9 (rocketio v0.2.6)
 // https://github.com/shokai/sinatra-rocketio-linda
 // (c) 2013 Sho Hashimoto <hashimoto@shokai.org>
 // The MIT License
