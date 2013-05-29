@@ -18,7 +18,7 @@ module Sinatra
           @tuplespace = Hash.new{|h,k|
             h[k] = Sinatra::RocketIO::Linda::Client::TupleSpace.new(k, self)
           }
-       end
+        end
 
         def wait(&block)
           loop do
