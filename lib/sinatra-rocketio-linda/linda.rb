@@ -16,6 +16,10 @@ module Sinatra
         end
       end
 
+      def self.callbacks
+        @@callbacks ||= Hash.new{|h,k| h[k] = Array.new }
+      end
+
     end
   end
 end
@@ -60,12 +64,16 @@ end
       Sinatra::RocketIO::Linda.emit :error, "received Callback ID is not valid at :__linda_#{func}"
       next
     end
-    eid = Sinatra::RocketIO::Linda[space].__send__ func, tuple do |tuple|
+    callback_id = Sinatra::RocketIO::Linda[space].__send__ func, tuple do |tuple|
       Sinatra::RocketIO.push "__linda_#{func}_callback_#{callback}", tuple, :to => client.session
       Sinatra::RocketIO::Linda.emit func, Hashie::Mash.new(:space => space, :tuple => tuple), client
     end
-    Sinatra::RocketIO.on :disconnect do |_client|
-      Sinatra::RocketIO::Linda[space].cancel eid if client.session == _client.session
-    end
+    Sinatra::RocketIO::Linda.callbacks[client.session].push(:space => space, :callback => callback_id)
+  end
+end
+
+Sinatra::RocketIO.on :disconnect do |client|
+  Sinatra::RocketIO::Linda.callbacks[client.session].each do |i|
+    Sinatra::RocketIO::Linda[i[:space]].cancel i[:callback]
   end
 end
