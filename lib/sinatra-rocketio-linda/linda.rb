@@ -65,7 +65,7 @@ end
       Sinatra::RocketIO::Linda.emit func, Hashie::Mash.new(:space => space, :tuple => tuple), client
     end
     Sinatra::RocketIO.on :disconnect do |_client|
-      Sinatra::RocketIO::Linda[space].remove_callback eid if client.session == _client.session
+      Sinatra::RocketIO::Linda[space].cancel eid if client.session == _client.session
     end
   end
 end

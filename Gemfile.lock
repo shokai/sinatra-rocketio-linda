@@ -26,9 +26,9 @@ GEM
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
     json (1.8.0)
-    linda (0.0.3)
+    linda (0.0.4)
       json
-    minitest (5.0.2)
+    minitest (5.0.3)
     multi_json (1.7.4)
     multi_xml (0.5.3)
     rack (1.5.2)
