@@ -1,3 +1,7 @@
+=== 0.1.1 2013-05-31
+
+* fix canceling callback on client disconnect
+
 === 0.1.0 2013-05-31
 
 * Linda::TupleSpace#cancel
