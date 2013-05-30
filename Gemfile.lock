@@ -4,7 +4,7 @@ PATH
     sinatra-rocketio-linda (0.0.9)
       event_emitter
       hashie
-      linda
+      linda (>= 0.0.4)
       sinatra
       sinatra-rocketio
 
