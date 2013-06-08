@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+$:.unshift File.expand_path '../lib', File.dirname(__FILE__)
+require 'rubygems'
+require 'sinatra/rocketio/linda/client'
+require 'args_parser'
+
+args = ArgsParser.parse ARGV do
+  arg :write, 'write Tuple(s)'
+  arg :read, 'read a Tuple'
+  arg :take, 'take a Tuple'
+  arg :watch, 'watch Tuples'
+  arg :base, 'linda base URL'
+  arg :space, 'linda space name'
+  arg :verbose, 'verbose mode', :alias => :v
+  arg :help, 'show help', :alias => :h
+
+  validate :base, "invalid linda URL" do |v|
+    v =~ /^https?:\/\/.+/
+  end
+
+  [:write, :read, :take, :watch].each do |i|
+    filter i do |v|
+      JSON.parse v
+    end
+  end
+end
+
+if args.has_option? :help or !args.has_param? :base, :space
+  STDERR.puts "RocketIO::Linda v#{Sinatra::RocketIO::Linda::VERSION}"
+  STDERR.puts " - https://github.com/shokai/sinatra-rocketio-linda"
+  STDERR.puts args.help
+  exit 1
+end
+
+io = Sinatra::RocketIO::Client.new args[:base]
+linda = Sinatra::RocketIO::Linda::Client.new io
+ts = linda.tuplespace[ args[:space] ]
+
+linda.io.on :connect do
+  puts "connect #{io.session} (#{io.type})" if args[:verbose]
+  if args.has_param? :write
+    puts "write a tuple #{args[:write].to_json}" if args[:verbose]
+    ts.write args[:write]
+    exit
+  end
+  exit 1
+end
+
+linda.io.on :disconnect do
+  puts "disconnect #{io.session} (#{io.type})" if args[:verbose]
+end
+
+puts "waiting #{args[:base]}" if args[:verbose]
+io.connect
+linda.wait
