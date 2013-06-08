@@ -26,22 +26,25 @@ args = ArgsParser.parse ARGV do
   end
 end
 
-class Logger
-  def enable=(bool)
-    @enable = bool
+class Console
+  def self.enable=(bool)
+    @@enable = bool
   end
 
-  def enable?
-    @enable
+  def self.enable?
+    @@enable
   end
 
-  def puts(str)
-    STDOUT.puts str if enable?
+  def self.log(str)
+    STDOUT.puts "* #{str}" if enable?
+  end
+
+  def self.error(str)
+    STDERR.puts "! #{str}" if enable?
   end
 end
 
-logger = Logger.new
-logger.enable = args.has_option? :verbose
+Console.enable = args.has_option? :verbose
 
 if args.has_option? :help or !args.has_param? :base, :space
   STDERR.puts "RocketIO::Linda v#{Sinatra::RocketIO::Linda::VERSION}"
@@ -55,25 +58,37 @@ linda = Sinatra::RocketIO::Linda::Client.new io
 ts = linda.tuplespace[ args[:space] ]
 
 linda.io.on :connect do
-  logger.puts "connect #{io.session} (#{io.type})"
+  Console.log "connect #{io.session} (#{io.type})"
   if args.has_param? :write
-    logger.puts "write #{args[:write].to_json}"
+    Console.log "write #{args[:write].to_json}"
     ts.write args[:write]
     exit
+  elsif args.has_option? :write
+    while line = STDIN.gets do
+      begin
+        tuple = JSON.parse line.strip
+        Console.log "write #{tuple.to_json}"
+        puts tuple.to_json
+        ts.write tuple
+      rescue => e
+        Console.error e
+      end
+    end
+    exit
   elsif args.has_param? :read
-    logger.puts "read #{args[:read].to_json}"
+    Console.log "read #{args[:read].to_json}"
     ts.read args[:read] do |tuple|
       puts tuple.to_json
       exit
     end
   elsif args.has_param? :take
-    logger.puts "take #{args[:take].to_json}"
+    Console.log "take #{args[:take].to_json}"
     ts.take args[:take] do |tuple|
       puts tuple.to_json
       exit
     end
   elsif args.has_param? :watch
-    logger.puts "watch #{args[:watch].to_json}"
+    Console.log "watch #{args[:watch].to_json}"
     ts.watch args[:watch] do |tuple|
       puts tuple.to_json
     end
@@ -83,16 +98,16 @@ linda.io.on :connect do
 end
 
 linda.io.on :disconnect do
-  logger.puts "disconnect #{io.session} (#{io.type})"
+  Console.log "disconnect #{io.session} (#{io.type})"
 end
 
-logger.puts "waiting #{args[:base]}"
+Console.log "waiting #{args[:base]}"
 io.connect
 
-if [Fixnum, Float].include? args[:timeout].class and args[:timeout] > 0
+if [Fixnum, Float].include? args[:timeout].class and args[:timeout] > 0 and !args.has_option?(:write)
   sleep args[:timeout]
 else
   linda.wait
 end
 
-logger.puts "timeout (#{args[:timeout]}sec)"
+Console.log "timeout (#{args[:timeout]}sec)"
