@@ -25,6 +25,23 @@ args = ArgsParser.parse ARGV do
   end
 end
 
+class Logger
+  def enable=(bool)
+    @enable = bool
+  end
+
+  def enable?
+    @enable
+  end
+
+  def puts(str)
+    STDOUT.puts str if enable?
+  end
+end
+
+logger = Logger.new
+logger.enable = args.has_option? :verbose
+
 if args.has_option? :help or !args.has_param? :base, :space
   STDERR.puts "RocketIO::Linda v#{Sinatra::RocketIO::Linda::VERSION}"
   STDERR.puts " - https://github.com/shokai/sinatra-rocketio-linda"
@@ -37,19 +54,32 @@ linda = Sinatra::RocketIO::Linda::Client.new io
 ts = linda.tuplespace[ args[:space] ]
 
 linda.io.on :connect do
-  puts "connect #{io.session} (#{io.type})" if args[:verbose]
+  logger.puts "connect #{io.session} (#{io.type})"
   if args.has_param? :write
-    puts "write a tuple #{args[:write].to_json}" if args[:verbose]
+    logger.puts "write a tuple #{args[:write].to_json}"
     ts.write args[:write]
     exit
+  elsif args.has_param? :read
+    logger.puts "read a tuple #{args[:read].to_json}"
+    ts.read args[:read] do |tuple|
+      puts tuple.to_json
+      exit
+    end
+  elsif args.has_param? :take
+    logger.puts "take a tuple #{args[:take].to_json}"
+    ts.take args[:take] do |tuple|
+      puts tuple.to_json
+      exit
+    end
+  else
+    exit 1
   end
-  exit 1
 end
 
 linda.io.on :disconnect do
-  puts "disconnect #{io.session} (#{io.type})" if args[:verbose]
+  logger.puts "disconnect #{io.session} (#{io.type})"
 end
 
-puts "waiting #{args[:base]}" if args[:verbose]
+logger.puts "waiting #{args[:base]}"
 io.connect
 linda.wait
