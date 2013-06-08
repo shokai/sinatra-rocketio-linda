@@ -1,3 +1,7 @@
+=== 0.1.2 2013-06-09
+
+* linda-rocketio command
+
 === 0.1.1 2013-05-31
 
 * fix canceling callback on client disconnect
