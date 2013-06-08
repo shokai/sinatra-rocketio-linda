@@ -9,8 +9,9 @@ args = ArgsParser.parse ARGV do
   arg :read, 'read a Tuple'
   arg :take, 'take a Tuple'
   arg :watch, 'watch Tuples'
-  arg :base, 'linda base URL'
-  arg :space, 'linda space name'
+  arg :base, 'linda base URL', :default => 'http://linda.shokai.org'
+  arg :space, 'linda space name', :default => 'test'
+  arg :timeout, 'wait (sec)', :default => 10
   arg :verbose, 'verbose mode', :alias => :v
   arg :help, 'show help', :alias => :h
 
@@ -18,8 +19,8 @@ args = ArgsParser.parse ARGV do
     v =~ /^https?:\/\/.+/
   end
 
-  [:write, :read, :take, :watch].each do |i|
-    filter i do |v|
+  [:write, :read, :take, :watch].each do |arg|
+    filter arg do |v|
       JSON.parse v
     end
   end
@@ -56,20 +57,25 @@ ts = linda.tuplespace[ args[:space] ]
 linda.io.on :connect do
   logger.puts "connect #{io.session} (#{io.type})"
   if args.has_param? :write
-    logger.puts "write a tuple #{args[:write].to_json}"
+    logger.puts "write #{args[:write].to_json}"
     ts.write args[:write]
     exit
   elsif args.has_param? :read
-    logger.puts "read a tuple #{args[:read].to_json}"
+    logger.puts "read #{args[:read].to_json}"
     ts.read args[:read] do |tuple|
       puts tuple.to_json
       exit
     end
   elsif args.has_param? :take
-    logger.puts "take a tuple #{args[:take].to_json}"
+    logger.puts "take #{args[:take].to_json}"
     ts.take args[:take] do |tuple|
       puts tuple.to_json
       exit
+    end
+  elsif args.has_param? :watch
+    logger.puts "watch #{args[:watch].to_json}"
+    ts.watch args[:watch] do |tuple|
+      puts tuple.to_json
     end
   else
     exit 1
@@ -82,4 +88,11 @@ end
 
 logger.puts "waiting #{args[:base]}"
 io.connect
-linda.wait
+
+if [Fixnum, Float].include? args[:timeout].class and args[:timeout] > 0
+  sleep args[:timeout]
+else
+  linda.wait
+end
+
+logger.puts "timeout (#{args[:timeout]}sec)"
