@@ -1,3 +1,4 @@
+require File.expand_path 'version', File.dirname(__FILE__)
 require 'event_emitter'
 require 'sinatra/rocketio/client'
 
