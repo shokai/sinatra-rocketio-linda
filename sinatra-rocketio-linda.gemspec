@@ -29,4 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "sinatra-rocketio"
   spec.add_dependency "event_emitter"
   spec.add_dependency "sinatra"
+  spec.add_dependency "args_parser"
 end

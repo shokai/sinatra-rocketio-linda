@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     sinatra-rocketio-linda (0.1.1)
+      args_parser
       event_emitter
       hashie
       linda (>= 0.0.4)
@@ -11,6 +12,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    args_parser (0.1.4)
     backports (3.3.1)
     daemons (1.1.9)
     em-websocket (0.5.0)
