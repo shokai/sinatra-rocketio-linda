@@ -1,3 +1,7 @@
+=== 0.1.3 2013-06-09
+
+* fix linda-rocketio command
+
 === 0.1.2 2013-06-09
 
 * linda-rocketio command
