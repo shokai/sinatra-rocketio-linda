@@ -49,7 +49,15 @@ Console.enable = args.has_option? :verbose
 if args.has_option? :help or !args.has_param? :base, :space
   STDERR.puts "RocketIO::Linda v#{Sinatra::RocketIO::Linda::VERSION}"
   STDERR.puts " - https://github.com/shokai/sinatra-rocketio-linda"
+  STDERR.puts
   STDERR.puts args.help
+  STDERR.puts
+  STDERR.puts "e.g."
+  STDERR.puts %Q{write  #{$0} --base http://example.com --space test --write '["say","hello"]'}
+  STDERR.puts %Q{       echo '["say","hello"]\\n["say","world"]' | #{$0} --base http://example.com --space test --write}
+  STDERR.puts %Q{read   #{$0} --base http://example.com --space test --read '["say"]'}
+  STDERR.puts %Q{take   #{$0} --base http://example.com --space test --take '["say"]'}
+  STDERR.puts %Q{watch  #{$0} --base http://example.com --space test --watch '["say"]'}
   exit 1
 end
 

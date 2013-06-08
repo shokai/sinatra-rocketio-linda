@@ -147,6 +147,13 @@ linda.wait
 ```
 
 
+linda-rocketio command
+----------------------
+
+    % lidna-rocketio --help
+    % linda-rocketio --write '["say","hello"]' --base http://example.com --space test
+
+
 JavaScript Lib for browser
 --------------------------
 
