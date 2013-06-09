@@ -6,12 +6,9 @@ require 'args_parser'
 $stdout.sync = true
 
 args = ArgsParser.parse ARGV do
-  arg :write, 'write Tuple(s)'
-  arg :read, 'read a Tuple'
-  arg :take, 'take a Tuple'
-  arg :watch, 'watch Tuples'
-  arg :base, 'linda base URL', :default => 'http://linda.shokai.org'
-  arg :space, 'linda space name', :default => 'test'
+  arg :tuple, 'tuple(s)'
+  arg :base, 'linda base URL'
+  arg :space, 'linda space name'
   arg :timeout, 'wait (sec)', :default => 10
   arg :verbose, 'verbose mode', :alias => :v
   arg :help, 'show help', :alias => :h
@@ -20,10 +17,8 @@ args = ArgsParser.parse ARGV do
     v =~ /^https?:\/\/.+/
   end
 
-  [:write, :read, :take, :watch].each do |arg|
-    filter arg do |v|
-      JSON.parse v
-    end
+  filter :tuple do |v|
+    JSON.parse v
   end
 end
 
@@ -47,7 +42,8 @@ end
 
 Console.enable = args.has_option? :verbose
 
-if args.has_option? :help or !args.has_param? :base, :space
+if args.has_option? :help or !args.has_param?(:base, :space) or
+    !["read","write","take","watch"].include?(args.first)
   bin = $0.split("/").last
   STDERR.puts "RocketIO::Linda v#{Sinatra::RocketIO::Linda::VERSION}"
   STDERR.puts " - https://github.com/shokai/sinatra-rocketio-linda"
@@ -55,11 +51,11 @@ if args.has_option? :help or !args.has_param? :base, :space
   STDERR.puts args.help
   STDERR.puts
   STDERR.puts "e.g."
-  STDERR.puts %Q{write   #{bin} --base http://example.com --space test --write '["say","hello"]'}
-  STDERR.puts %Q{        echo '["say","hello"]\\n["say","world"]' | #{bin} --base http://example.com --space test --write}
-  STDERR.puts %Q{read    #{bin} --base http://example.com --space test --read '["say"]'}
-  STDERR.puts %Q{take    #{bin} --base http://example.com --space test --take '["say"]'}
-  STDERR.puts %Q{watch   #{bin} --base http://example.com --space test --watch '["say"]'}
+  STDERR.puts %Q{write   #{bin} write -tuple '["say","hello"]' -base http://example.com -space test}
+  STDERR.puts %Q{        echo '["say","hello"]\\n["say","world"]' | #{bin} write -base http://example.com -space test}
+  STDERR.puts %Q{read    #{bin} read  -tuple '["say"]' -base http://example.com -space test}
+  STDERR.puts %Q{take    #{bin} take  -tuple '["say"]' -base http://example.com -space test}
+  STDERR.puts %Q{watch   #{bin} watch -tuple '["say"]' -base http://example.com -space test}
   exit 1
 end
 
@@ -69,37 +65,40 @@ ts = linda.tuplespace[ args[:space] ]
 
 linda.io.on :connect do
   Console.log "connect #{io.session} (#{io.type})"
-  if args.has_param? :write
-    Console.log "write #{args[:write].to_json}"
-    ts.write args[:write]
-    exit
-  elsif args.has_option? :write
-    while line = STDIN.gets do
-      begin
-        tuple = JSON.parse line.strip
-        Console.log "write #{tuple.to_json}"
-        puts tuple.to_json
-        ts.write tuple
-      rescue => e
-        Console.error e
+  case args.first
+  when "write"
+    if args.has_param? :tuple
+      Console.log "write #{args[:tuple].to_json}"
+      ts.write args[:tuple]
+      exit
+    else
+      while line = STDIN.gets do
+        begin
+          tuple = JSON.parse line.strip
+          Console.log "write #{tuple.to_json}"
+          puts tuple.to_json
+          ts.write tuple
+        rescue => e
+          Console.error e
+        end
       end
+      exit
     end
-    exit
-  elsif args.has_param? :read
-    Console.log "read #{args[:read].to_json}"
-    ts.read args[:read] do |tuple|
+  when "read"
+    Console.log "read #{args[:tuple].to_json}"
+    ts.read args[:tuple] do |tuple|
       puts tuple.to_json
       exit
     end
-  elsif args.has_param? :take
-    Console.log "take #{args[:take].to_json}"
-    ts.take args[:take] do |tuple|
+  when "take"
+    Console.log "take #{args[:tuple].to_json}"
+    ts.take args[:tuple] do |tuple|
       puts tuple.to_json
       exit
     end
-  elsif args.has_param? :watch
-    Console.log "watch #{args[:watch].to_json}"
-    ts.watch args[:watch] do |tuple|
+  when "watch"
+    Console.log "watch #{args[:tuple].to_json}"
+    ts.watch args[:tuple] do |tuple|
       puts tuple.to_json
     end
   else
@@ -115,7 +114,7 @@ Console.log "waiting #{args[:base]}"
 io.connect
 
 if [Fixnum, Float].include? args[:timeout].class and args[:timeout] > 0 and
-    !args.has_option?(:write) and !args.has_param?(:watch)
+    args.first != "watch" and !(args.first == "write" and !args.has_param?(:tuple))
   sleep args[:timeout]
 else
   linda.wait
