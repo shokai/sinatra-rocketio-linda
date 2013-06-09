@@ -1,3 +1,7 @@
+=== 0.2.0 2013-06-10
+
+* changed linda-rocketio command options
+
 === 0.1.4 2013-06-09
 
 * bugfix linda-rocketio command
