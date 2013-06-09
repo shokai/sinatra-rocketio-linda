@@ -3,6 +3,7 @@ $:.unshift File.expand_path '../lib', File.dirname(__FILE__)
 require 'rubygems'
 require 'sinatra/rocketio/linda/client'
 require 'args_parser'
+$stdout.sync = true
 
 args = ArgsParser.parse ARGV do
   arg :write, 'write Tuple(s)'
