@@ -114,7 +114,8 @@ end
 Console.log "waiting #{args[:base]}"
 io.connect
 
-if [Fixnum, Float].include? args[:timeout].class and args[:timeout] > 0 and !args.has_option?(:write)
+if [Fixnum, Float].include? args[:timeout].class and args[:timeout] > 0 and
+    !args.has_option?(:write) and !args.has_param?(:watch)
   sleep args[:timeout]
 else
   linda.wait
