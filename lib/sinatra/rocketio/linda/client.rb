@@ -46,7 +46,7 @@ module Sinatra
             unless [Hash, Array].include? tuple.class
               raise ArgumentError, "tuple must be Array or Hash"
             end
-            callback_id = "#{Time.now.to_i}#{Time.now.usec}_#{(rand*1000000).to_i}"
+            callback_id = create_callback_id
             @linda.io.once "__linda_read_callback_#{callback_id}", &block
             @linda.io.push "__linda_read", [@name, tuple, callback_id]
           end
@@ -55,7 +55,7 @@ module Sinatra
             unless [Hash, Array].include? tuple.class
               raise ArgumentError, "tuple must be Array or Hash"
             end
-            callback_id = "#{Time.now.to_i}#{Time.now.usec}_#{(rand*1000000).to_i}"
+            callback_id = create_callback_id
             @linda.io.once "__linda_take_callback_#{callback_id}", &block
             @linda.io.push "__linda_take", [@name, tuple, callback_id]
           end
@@ -64,9 +64,14 @@ module Sinatra
             unless [Hash, Array].include? tuple.class
               raise ArgumentError, "tuple must be Array or Hash"
             end
-            callback_id = "#{Time.now.to_i}#{Time.now.usec}_#{(rand*1000000).to_i}"
+            callback_id = create_callback_id
             @linda.io.on "__linda_watch_callback_#{callback_id}", &block
             @linda.io.push "__linda_watch", [@name, tuple, callback_id]
+          end
+
+          private
+          def create_callback_id
+            "#{Time.now.to_i}#{Time.now.usec}_#{(rand*1000000).to_i}"
           end
 
         end
