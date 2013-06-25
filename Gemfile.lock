@@ -13,7 +13,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     args_parser (0.1.6)
-    backports (3.3.1)
+    backports (3.3.2)
     daemons (1.1.9)
     em-websocket (0.5.0)
       eventmachine (>= 0.12.9)
@@ -30,15 +30,15 @@ GEM
     json (1.8.0)
     linda (0.0.4)
       json
-    minitest (5.0.4)
-    multi_json (1.7.6)
+    minitest (5.0.5)
+    multi_json (1.7.7)
     multi_xml (0.5.4)
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
-    rake (10.0.4)
+    rake (10.1.0)
     sinatra (1.4.3)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -77,7 +77,7 @@ GEM
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
     tilt (1.4.1)
-    websocket (1.0.7)
+    websocket (1.1.0)
     websocket-client-simple (0.0.5)
       event_emitter
       websocket
