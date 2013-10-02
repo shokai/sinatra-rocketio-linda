@@ -47,8 +47,23 @@ module Sinatra
               raise ArgumentError, "tuple must be Array or Hash"
             end
             callback_id = create_callback_id
-            @linda.io.once "__linda_read_callback_#{callback_id}", &block
+            res_ = nil
+            if block_given?
+              @linda.io.once "__linda_read_callback_#{callback_id}", &block
+            else
+              @linda.io.once "__linda_read_callback_#{callback_id}" do |tuple_|
+                res_ = tuple_
+                puts "blocking style #{tuple_}"
+              end
+            end
             @linda.io.push "__linda_read", [@name, tuple, callback_id]
+            unless block_given?
+              loop do
+                break if res_ != nil
+                sleep 1
+              end
+              return res_
+            end
           end
 
           def take(tuple, &block)
