@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "linda", ">= 0.0.4"
   spec.add_dependency "hashie"
-  spec.add_dependency "sinatra-rocketio"
+  spec.add_dependency "sinatra-rocketio", "~> 0.3"
   spec.add_dependency "event_emitter"
   spec.add_dependency "sinatra"
   spec.add_dependency "args_parser"
