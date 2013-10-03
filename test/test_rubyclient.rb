@@ -122,4 +122,39 @@ class TestRubyClient < MiniTest::Test
     assert_equal _tuple1, ["expire",1,2,"a","b"]
     assert_equal _tuple2, ["expire",1,2,3]
   end
+
+  def test_tuple_info
+    ts = @client.tuplespace["ts_#{rand Time.now.to_i}"]
+    _tuple1 = nil
+    _tuple2 = nil
+    _tuple3 = nil
+    _info1 = nil
+    _info2 = nil
+    _info3 = nil
+    @client.io.on :connect do
+      ts.read [1,2] do |tuple, info|
+        _tuple1 = tuple
+        _info1 = info
+      end
+      ts.watch [1] do |tuple, info|
+        _tuple2 = tuple
+        _info2 = info
+      end
+      ts.take [1,2,3] do |tuple, info|
+        _tuple3 = tuple
+        _info3 = info
+      end
+      ts.write [1,2,3]
+    end
+    50.times do
+      sleep 0.1
+      break if _tuple3
+    end
+    assert_equal _tuple1, [1,2,3]
+    assert_equal _tuple2, [1,2,3]
+    assert_equal _tuple3, [1,2,3]
+    assert _info1.from =~ /^\d+\.\d+\.\d+\.\d+$/
+    assert _info2.from =~ /^\d+\.\d+\.\d+\.\d+$/
+    assert _info3.from =~ /^\d+\.\d+\.\d+\.\d+$/
+  end
 end
