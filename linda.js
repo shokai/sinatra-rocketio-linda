@@ -1,4 +1,4 @@
-// Linda.js v0.2.0 (rocketio v0.2.6)
+// Linda.js v0.2.0 (rocketio v0.3.0)
 // https://github.com/shokai/sinatra-rocketio-linda
 // (c) 2013 Sho Hashimoto <hashimoto@shokai.org>
 // The MIT License
@@ -29,21 +29,27 @@ var Linda = function(io, opts){
       if(tuple === null || typeof tuple !== "object") return;
       if(typeof callback !== "function") return;
       var callback_id = make_callback_id();
-      self.io.once("__linda_read_callback_"+callback_id, callback);
+      self.io.once("__linda_read_callback_"+callback_id, function(data){
+        callback(data.tuple, data.info);
+      });
       self.io.push("__linda_read", [space.name, tuple, callback_id]);
     };
     this.take = function(tuple, callback){
       if(tuple === null || typeof tuple !== "object") return;
       if(typeof callback !== "function") return;
       var callback_id = make_callback_id();
-      self.io.once("__linda_take_callback_"+callback_id, callback);
+      self.io.once("__linda_take_callback_"+callback_id, function(data){
+        callback(data.tuple, data.info);
+      });
       self.io.push("__linda_take", [space.name, tuple, callback_id]);
     };
     this.watch = function(tuple, callback){
       if(tuple === null || typeof tuple !== "object") return;
       if(typeof callback !== "function") return;
       var callback_id = make_callback_id();
-      self.io.on("__linda_watch_callback_"+callback_id, callback);
+      self.io.on("__linda_watch_callback_"+callback_id, function(data){
+        callback(data.tuple, data.info);
+      });
       self.io.push("__linda_watch", [space.name, tuple, callback_id]);
     };
   };
