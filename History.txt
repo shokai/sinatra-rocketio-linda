@@ -1,3 +1,7 @@
+=== 1.0.0 2013-10-03
+
+* !!! protocol was updated
+
 === 0.2.0 2013-06-10
 
 * changed linda-rocketio command options
