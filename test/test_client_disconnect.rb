@@ -15,16 +15,16 @@ class TestClientDisconnect < MiniTest::Test
       client2.io.on :connect do
         ts1 = client1.tuplespace[ts_name]
         ts2 = client2.tuplespace[ts_name]
-        ts1.read [1,2] do |tuple|
+        ts1.read [1,2] do |tuple, info|
           _tuple1 = tuple
         end
-        ts1.take [1,2] do |tuple|
+        ts1.take [1,2] do |tuple, info|
           _tuple2 = tuple
         end
-        ts1.watch [1,2] do |tuple|
+        ts1.watch [1,2] do |tuple, info|
           _tuple3 = tuple
         end
-        ts2.take [1,2] do |tuple|
+        ts2.take [1,2] do |tuple, info|
           _tuple4 = tuple
         end
         client1.io.close

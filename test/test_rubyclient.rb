@@ -18,19 +18,19 @@ class TestRubyClient < MiniTest::Test
       ts.write ["rw",1,2,3]
       ts.write ["rw",1,2,"a"]
       ts.write ["rw",1,"a",2]
-      ts.take ["rw",1,2] do |tuple|
+      ts.take ["rw",1,2] do |tuple, info|
         _tuple1 = tuple
       end
-      ts.read ["rw",1,2] do |tuple|
+      ts.read ["rw",1,2] do |tuple, info|
         _tuple2 = tuple
       end
-      ts.take ["rw",1,2] do |tuple|
+      ts.take ["rw",1,2] do |tuple, info|
         _tuple3 = tuple
       end
       client2 = Sinatra::RocketIO::Linda::Client.new App.url
       ts2 = client2.tuplespace[ts_name]
       client2.io.on :connect do
-        ts2.take ["rw",1] do |tuple|
+        ts2.take ["rw",1] do |tuple, info|
           _tuple4 = tuple
         end
       end
@@ -51,13 +51,13 @@ class TestRubyClient < MiniTest::Test
     _tuple2 = nil
     ts = @client.tuplespace["ts_#{rand Time.now.to_i}"]
     @client.io.on :connect do
-      ts.take ["watch",1,2] do |tuple|
+      ts.take ["watch",1,2] do |tuple, info|
         _tuple1 = tuple
       end
-      ts.read ["watch",1,2] do |tuple|
+      ts.read ["watch",1,2] do |tuple, info|
         _tuple2 = tuple
       end
-      ts.watch ["watch",1,2] do |tuple|
+      ts.watch ["watch",1,2] do |tuple, info|
         results.push tuple
       end
       ts.write ["watch",1,2,3]
@@ -81,10 +81,10 @@ class TestRubyClient < MiniTest::Test
     _tuple1 = nil
     _tuple2 = nil
     @client.io.on :connect do
-      ts2.take ["a"] do |tuple|
+      ts2.take ["a"] do |tuple, info|
         _tuple2 = tuple
       end
-      ts1.take [1] do |tuple|
+      ts1.take [1] do |tuple, info|
         _tuple1 = tuple
       end
       ts1.write [1,2,3]
@@ -106,12 +106,12 @@ class TestRubyClient < MiniTest::Test
       ts.write ["expire",1,2,999], :expire => false
       ts.write ["expire",1,2,3], :expire => 10
       ts.write ["expire",1,2,"a","b"], :expire => 2
-      ts.read ["expire",1,2] do |tuple|
+      ts.read ["expire",1,2] do |tuple, info|
         _tuple1 = tuple
       end
       sleep 3
       push :check_expire, nil
-      ts.read ["expire",1,2] do |tuple|
+      ts.read ["expire",1,2] do |tuple, info|
         _tuple2 = tuple
       end
     end
