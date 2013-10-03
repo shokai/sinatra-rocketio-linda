@@ -7,10 +7,10 @@ linda = Sinatra::RocketIO::Linda::Client.new 'http://localhost:5000'
 ts = linda.tuplespace["calc"]
 
 calc = lambda{
-  ts.take ["calc_request"] do |tuple|
+  ts.take ["calc_request"] do |tuple, info|
     query = tuple[1]
     result = eval(query)
-    puts "calc: #{query} = #{result}"
+    puts "calc: #{query} = #{result} (from:#{info.from})"
     ts.write ["calc_result", result]
     calc.call
   end

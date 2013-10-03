@@ -2,7 +2,7 @@ var linda = new Linda();
 var ts = new linda.TupleSpace("calc");
 
 var calc = function(){
-  ts.take(["calc_request"], function(tuple){
+  ts.take(["calc_request"], function(tuple, info){
     var query = tuple[1];
     var result = eval(query);
     $("#log").prepend( $("<p>").text(query+" = "+result).prepend("calc: ") );

@@ -1,10 +1,14 @@
 require File.expand_path 'version', File.dirname(__FILE__)
 require 'event_emitter'
+require 'hashie'
 require 'sinatra/rocketio/client'
 
 module Sinatra
   module RocketIO
     module Linda
+
+      class TupleInfo < Hashie::Mash
+      end
 
       class Client
         attr_reader :io, :tuplespace
@@ -49,7 +53,7 @@ module Sinatra
             callback_id = create_callback_id
             if block_given?
               @linda.io.once "__linda_read_callback_#{callback_id}" do |data|
-                block.call(data['tuple'], data['info'])
+                block.call(data['tuple'], TupleInfo.new(data['info']))
               end
             end
             @linda.io.push "__linda_read", [@name, tuple, callback_id]
@@ -62,7 +66,7 @@ module Sinatra
             callback_id = create_callback_id
             if block_given?
               @linda.io.once "__linda_take_callback_#{callback_id}" do |data|
-                block.call(data['tuple'], data['info'])
+                block.call(data['tuple'], TupleInfo.new(data['info']))
               end
             end
             @linda.io.push "__linda_take", [@name, tuple, callback_id]
@@ -75,7 +79,7 @@ module Sinatra
             callback_id = create_callback_id
             if block_given?
               @linda.io.on "__linda_watch_callback_#{callback_id}" do |data|
-                block.call(data['tuple'], data['info'])
+                block.call(data['tuple'], TupleInfo.new(data['info']))
               end
             end
             @linda.io.push "__linda_watch", [@name, tuple, callback_id]

@@ -8,8 +8,8 @@ ts = linda.tuplespace["calc"]
 
 linda.io.on :connect do
   puts "connect #{io.session}"
-  ts.watch [] do |tuple|
-    puts "watch #{tuple}"
+  ts.watch [] do |tuple, info|
+    puts "watch #{tuple} (from:#{info.from})"
   end
 end
 
