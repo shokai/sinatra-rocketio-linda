@@ -89,7 +89,7 @@ $("#btn_request").click(function(){
 
 // wait result
 var take_result = function(){
-  ts.take(["calc_result"], function(tuple){
+  ts.take(["calc_result"], function(tuple, info){
     var result = tuple[1]; // from 'worker' side
     console.log(result);
     take_result(); // recursive call
@@ -106,7 +106,7 @@ var ts = new linda.TupleSpace("calc");
 
 // calculate
 var calc = function(){
-  ts.take(["calc_request"], function(tuple){
+  ts.take(["calc_request"], function(tuple, info){
     var query = tuple[1]; // => "1-2+3*4"
     var result = eval(query);
     console.log(query+" = "+result); // => "1-2+3*4 = 11"
@@ -129,7 +129,7 @@ ts = linda.tuplespace["calc"]
 
 ## calculate
 calc = lambda{
-  ts.take ["calc_request"] do |tuple|
+  ts.take ["calc_request"] do |tuple, info|
     query = tuple[1] ## => "1-2+3*4"
     result = eval(query)
     puts "calc: #{query} = #{result}" ## => "1-2+3*4 = 11"
