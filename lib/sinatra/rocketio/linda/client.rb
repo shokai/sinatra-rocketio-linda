@@ -47,7 +47,11 @@ module Sinatra
               raise ArgumentError, "tuple must be Array or Hash"
             end
             callback_id = create_callback_id
-            @linda.io.once "__linda_read_callback_#{callback_id}", &block
+            if block_given?
+              @linda.io.once "__linda_read_callback_#{callback_id}" do |data|
+                block.call(data['tuple'], data['info'])
+              end
+            end
             @linda.io.push "__linda_read", [@name, tuple, callback_id]
           end
 
@@ -56,7 +60,11 @@ module Sinatra
               raise ArgumentError, "tuple must be Array or Hash"
             end
             callback_id = create_callback_id
-            @linda.io.once "__linda_take_callback_#{callback_id}", &block
+            if block_given?
+              @linda.io.once "__linda_take_callback_#{callback_id}" do |data|
+                block.call(data['tuple'], data['info'])
+              end
+            end
             @linda.io.push "__linda_take", [@name, tuple, callback_id]
           end
 
@@ -65,7 +73,11 @@ module Sinatra
               raise ArgumentError, "tuple must be Array or Hash"
             end
             callback_id = create_callback_id
-            @linda.io.on "__linda_watch_callback_#{callback_id}", &block
+            if block_given?
+              @linda.io.on "__linda_watch_callback_#{callback_id}" do |data|
+                block.call(data['tuple'], data['info'])
+              end
+            end
             @linda.io.push "__linda_watch", [@name, tuple, callback_id]
           end
 

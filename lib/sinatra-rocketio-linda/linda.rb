@@ -48,7 +48,9 @@ Sinatra::RocketIO.on :__linda_write do |data, client|
     end
     opts = opts_
   end
-  Sinatra::RocketIO::Linda[space].write tuple, opts
+  opts[:from] = client.address
+  _tuple = Sinatra::RocketIO::Linda::Tuple.new tuple, opts
+  Sinatra::RocketIO::Linda[space].write _tuple
   Sinatra::RocketIO::Linda.emit :write, Hashie::Mash.new(:space => space, :tuple => tuple), client
 end
 
@@ -65,7 +67,7 @@ end
       next
     end
     callback_id = Sinatra::RocketIO::Linda[space].__send__ func, tuple do |tuple|
-      Sinatra::RocketIO.push "__linda_#{func}_callback_#{callback}", tuple, :to => client.session
+      Sinatra::RocketIO.push "__linda_#{func}_callback_#{callback}", {:tuple => tuple.data, :info => {:from => tuple.from}}, :to => client.session
       Sinatra::RocketIO::Linda.emit func, Hashie::Mash.new(:space => space, :tuple => tuple), client
     end
     Sinatra::RocketIO::Linda.callbacks[client.session].push(:space => space, :callback => callback_id)
