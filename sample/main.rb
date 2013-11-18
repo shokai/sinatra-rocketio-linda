@@ -17,6 +17,14 @@ get '/' do
   haml :index
 end
 
+get '/list/*' do
+  tuple = params[:splat][0].split('/')
+  puts "list #{tuple}"
+  linda.tuplespaces["calc"].list(tuple).map{ |t|
+    t.data
+  }.to_json
+end
+
 get '/worker' do
   haml :worker
 end
