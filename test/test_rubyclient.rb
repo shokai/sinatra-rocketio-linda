@@ -157,4 +157,32 @@ class TestRubyClient < MiniTest::Test
     assert _info2.from =~ /^\d+\.\d+\.\d+\.\d+$/
     assert _info3.from =~ /^\d+\.\d+\.\d+\.\d+$/
   end
+
+  def test_tuples_list
+    ts = @client.tuplespace["ts_#{rand Time.now.to_i}"]
+    _tuple1 = ["a", "b", "c"]
+    _tuple2 = ["a", "b"]
+    _tuple3 = ["a", "b", "c", 123]
+    _result1 = nil
+    _result2 = nil
+    @client.io.on :connect do
+      ts.write _tuple1
+      ts.write _tuple2
+      ts.write _tuple3
+
+      ts.list ["a", "b", "c"] do |tuples|
+        _result1 = tuples
+      end
+
+      ts.list ["a", "b"] do |tuples|
+        _result2 = tuples
+      end
+    end
+    50.times do
+      sleep 0.1
+      break if _result2
+    end
+    assert_equal _result1, [_tuple3, _tuple1]
+    assert_equal _result2, [_tuple3, _tuple2, _tuple1]
+  end
 end
