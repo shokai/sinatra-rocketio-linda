@@ -75,6 +75,18 @@ end
   end
 end
 
+Sinatra::RocketIO.on :__linda_list do |data, client|
+  space, tuple, callback = data
+  space = "__default__" if !space or !space.kind_of? String or space.empty?
+  unless [Hash, Array].include? tuple.class
+    Sinatra::RocketIO::Linda.emit :error, "received Tuple is not Hash or Array at :__linda_list"
+    next
+  end
+  list = Sinatra::RocketIO::Linda[space].list tuple
+  Sinatra::RocketIO::Linda.emit :list, list, client
+  Sinatra::RocketIO.push "__linda_list_callback_#{callback}", list
+end
+
 Sinatra::RocketIO.on :disconnect do |client|
   Sinatra::RocketIO::Linda.callbacks[client.session].each do |i|
     Sinatra::RocketIO::Linda[i[:space]].cancel i[:callback]
