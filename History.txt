@@ -1,3 +1,7 @@
+=== 1.1.0 2013-11-19
+
+* add function Sinatra::RocketIO::Linda::TupleSpace#list
+
 === 1.0.1 2013-10-10
 
 * bugfix Sinatar::RocketIO::Linda::TupleSpace#write
