@@ -83,7 +83,6 @@ Sinatra::RocketIO.on :__linda_list do |data, client|
     next
   end
   list = Sinatra::RocketIO::Linda[space].list tuple
-  Sinatra::RocketIO::Linda.emit :list, list, client
   Sinatra::RocketIO.push "__linda_list_callback_#{callback}", list
 end
 
